@@ -9,6 +9,8 @@ services:
       - "/opt/teamcity/pg_backup:/backups"
     env_file: .env
     restart: always
+    networks:
+      - teamcity_db
 
   server:
     image: jetbrains/teamcity-server:latest
@@ -16,8 +18,18 @@ services:
       - "/opt/teamcity/data:/data/teamcity_server/datadir"
       - "/opt/teamcity/logs:/opt/teamcity/logs"
     ports:
-      - 8111:8111
+      - 127.0.0.1:8111:8111
     depends_on:
       - postgres
     env_file: .env
     restart: always
+    networks:
+      - teamcity_internal
+      - teamcity_db
+
+networks:
+  teamcity_internal:
+    external: true
+  teamcity_db:
+    external: true
+
